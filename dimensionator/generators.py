@@ -83,6 +83,7 @@ class DataGen:
 
         bounds = [data_index_by_rate[bound] for bound in data_index_by_rate.keys()]
         sorted_bounds = sorted(bounds, key=lambda x: x[0])
+        self.bounds = sorted_bounds
 
         inv_data_index_by_rate = {v: k for k, v in data_index_by_rate.items()}
         sorted_rates = []
