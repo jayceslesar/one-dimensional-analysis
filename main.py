@@ -7,10 +7,11 @@ def main():
     # my_data.generate()
 
     # my_data.explore()
-
-    my_cube = DDDRandomWalk(5, 5, 5)
-    my_cube.walk(unique_path=True)
-    my_cube.walk(num_steps = 100, unique_path=True)
+    dims = [9, 49, 99, 499]
+    for dim in dims:
+        shape = dim
+        my_cube = DDDRandomWalk(shape, shape, shape)
+        my_cube.walk(unique_path=False)
 
 
 if __name__ == '__main__':

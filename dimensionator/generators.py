@@ -130,6 +130,9 @@ class DDDRandomWalk:
         self.empty = np.zeros((length, width, height))
         middle = int((length - 1)/2)
         self.starting_point = (middle, middle, middle)
+        self.length = length
+        self.width = width
+        self.height = height
 
     def get_neighbors(self, x: int, y: int, z: int, already_visited: list = None):
         """Get the neighbors of a given point, within bounds."""
@@ -204,3 +207,18 @@ class DDDRandomWalk:
 
             except IndexError:  # no more neighbors that have not been visited
                 pass
+
+        x = cube_to_walk[:, 0, 0]
+        y = cube_to_walk[0, :, 0]
+        z = cube_to_walk[0, 0, :]
+
+
+
+        x, y, z = np.where(cube_to_walk == 1)
+
+        fig = go.Figure(data=[go.Scatter3d(x=x, y=y, z=z,
+                                        mode='markers')])
+        fig.update_layout(title=f'{self.length+1}x{self.width+1}x{self.height+1}, ran for {iterations:,} steps.')
+        fig.show()
+
+
