@@ -2,6 +2,7 @@ import networkx as nx
 import numpy as np
 import random
 from collections import OrderedDict
+import matplotlib.pyplot as plt
 
 def make_graph(prob, num_nodes):
   G = nx.DiGraph()
