@@ -1,9 +1,11 @@
 import numpy as np
+import random
 import plotly.graph_objs as go
 import plotly.express as px
 from typing import Union
 import os
 import webbrowser
+from copy import deepcopy
 
 
 def figures_to_html(figs, filename="dashboard.html"):
@@ -115,3 +117,90 @@ class DataGen:
         path = os.path.join('explorable.html')
         figures_to_html(to_plot, path)
         webbrowser.open_new_tab(f'file://{os.path.join(os.getcwd(), path)}')
+
+
+class DDDRandomWalk:
+    def __init__(self, length: int, width: int, height: int):
+        if not (length % 2 == 1 and width % 2 == 1 and height % 2 == 1):
+            raise ValueError('Length, Width, and Height Parameters must be odd.')
+
+        if not (length == width == height):
+            raise ValueError('Length, Width, and Height Parameters must the same.')
+
+        self.empty = np.zeros((length, width, height))
+        middle = int((length - 1)/2)
+        self.starting_point = (middle, middle, middle)
+
+    def get_neighbors(self, x: int, y: int, z: int, already_visited: list = None):
+        """Get the neighbors of a given point, within bounds."""
+        neighbors = []
+        x_upper, y_upper, z_upper = self.empty.shape
+
+        neighbors.append((x+1, y, z))
+        neighbors.append((x-1, y, z))
+        neighbors.append((x, y+1, z))
+        neighbors.append((x, y-1, z))
+        neighbors.append((x, y, z+1))
+        neighbors.append((x, y, z-1))
+
+        fixed_neighbors = []
+        for neighbor in neighbors:
+            x_test, y_test, z_test = neighbor
+            if x_test >= x_upper or y_test >= y_upper or z_test >= z_upper:
+                continue
+            if x_test < 0 or y_test < 0 or z_test < 0:
+                continue
+            if already_visited is not None and neighbor in already_visited:
+                continue
+
+            fixed_neighbors.append(neighbor)
+
+        return fixed_neighbors
+
+    def walk(self, num_steps: int = None, unique_path: bool = False):
+        """Perform a random walk for n steps or until an edge is hit."""
+        cube_to_walk = deepcopy(self.empty)
+        current_x, current_y, current_z = self.starting_point
+        visited = [self.starting_point]
+        x_upper, y_upper, z_upper = self.empty.shape
+
+        cube_to_walk[current_x, current_y, current_z] = 1
+        iterations = 1
+
+        if num_steps is None:
+            done = False
+            while not done:
+                if unique_path:
+                    neighbors = self.get_neighbors(current_x, current_y, current_z, visited)
+                else:
+                    neighbors = self.get_neighbors(current_x, current_y, current_z)
+
+                next_point = random.choice(neighbors)
+                next_x, next_y, next_z = next_point
+                if (next_x == 0 or next_x == x_upper-1) or (next_y == 0 or next_y == y_upper-1) or (next_z == 0 or next_z == z_upper-1):
+                    done = True
+
+                current_x, current_y, current_z = next_x, next_y, next_z
+                cube_to_walk[current_x, current_y, current_z] = 1
+                iterations += 1
+                visited.append(next_point)
+
+        else:
+            try:
+                for step in range(num_steps):
+                    if unique_path:
+                        neighbors = self.get_neighbors(current_x, current_y, current_z, visited)
+                    else:
+                        neighbors = self.get_neighbors(current_x, current_y, current_z)
+
+                    next_point = random.choice(neighbors)
+                    next_x, next_y, next_z = next_point
+                    if (next_x == 0 or next_x == x_upper-1) or (next_y == 0 or next_y == y_upper-1) or (next_z == 0 or next_z == z_upper-1):
+                        done = True
+
+                    current_x, current_y, current_z = next_x, next_y, next_z
+                    cube_to_walk[current_x, current_y, current_z] = 1
+                    visited.append(next_point)
+
+            except IndexError:  # no more neighbors that have not been visited
+                pass
