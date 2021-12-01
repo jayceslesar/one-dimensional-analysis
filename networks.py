@@ -5,6 +5,7 @@ from collections import OrderedDict
 import matplotlib.pyplot as plt
 import plotly.graph_objects as px
 import plotly.graph_objs as go
+import itertools
 
 def make_graph(prob, num_nodes):
   G = nx.DiGraph()
@@ -101,3 +102,12 @@ def comparison_graph(G, H):
   plot.update_layout(title='Metric Comparison of Graph vs. Sub-Graph')
                     
   plot.show()
+
+
+def run_multiple_runners(graph, num_times):
+  l = {}
+  for _ in range(num_times):
+    rand_node = random.randrange(0, graph.number_of_nodes())
+    visited = rw(graph, 100, rand_node)
+    l[rand_node] = visited
+  return set(itertools.chain(*list(l.values())))
