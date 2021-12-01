@@ -3,6 +3,8 @@ import numpy as np
 import random
 from collections import OrderedDict
 import matplotlib.pyplot as plt
+import plotly.graph_objects as px
+import plotly.graph_objs as go
 
 def make_graph(prob, num_nodes):
   G = nx.DiGraph()
@@ -11,13 +13,10 @@ def make_graph(prob, num_nodes):
     G.add_node(node)
     for neighbor in range(G.number_of_nodes()-1):
       if random.uniform(0, 1) < p: #create an edge
-        G.add_edge(node,neighbor)
-      if random.uniform(0, 1) < p: #create an edge
-        G.add_edge(neighbor,node)
-
-  from itertools import count
-  groups = set(nx.get_node_attributes(G,'state').values())
-  mapping = dict(zip(sorted(groups),count()))  
+        if np.random.binomial(1,0.5) == 0:
+          G.add_edge(*(node,neighbor))
+        else:
+          G.add_edge(*(neighbor, node))
   return G
 
 def draw(graph):
@@ -28,18 +27,10 @@ def metrics(graph):
   in_degree_centrality = nx.in_degree_centrality(graph)
   out_degree_centrality = nx.out_degree_centrality(graph)
 
-  # degDictG = {n: d for n, d in graph.degree()}
-  # orderedDegs = OrderedDict(sorted(degDictG.items(), key=lambda x: x[1], reverse=True))
-  # print('Degree: \n', orderedDegs)
+  closeness_centrality = nx.closeness_centrality(graph)
+  between_centrality = nx.betweenness_centrality(graph)
 
-  # print('')
-
-  # # Explain betweenness on board
-  # betDict = nx.betweenness_centrality(graph, normalized=False)
-  # orderedBets = OrderedDict(sorted(betDict.items(), key=lambda x: x[1], reverse=True))
-  # print("Betweenness:\n", orderedBets)
-
-  print(degree_centrality, in_degree_centrality, out_degree_centrality)
+  return degree_centrality, in_degree_centrality, out_degree_centrality, closeness_centrality, between_centrality
 
 def erdos_renyi(num_nodes, p, directed):
   F = nx.fast_gnp_random_graph(num_nodes, p, directed=directed)
@@ -75,3 +66,38 @@ def rw(graph, walk_length, starting_node):
 def sub_graph(graph, visited):
   H = nx.subgraph(graph, visited)
   return H
+
+def dict_mean(dicts):
+  return sum(dicts.values()) / len(dicts)
+
+
+ 
+def comparison_graph(G, H):
+
+  Gdc, Gidc, Godc, Gcc, Gbc  = metrics(G)
+  Hdc, Hidc, Hodc, Hcc, Hbc = metrics(H)
+  # creating random data through randomint
+  # function of numpy.random
+  np.random.seed(42)
+
+  x = ['Degree Centrality', 'In-Degree Centrality', 'Out-degree Centrality', 'Closeness Centrality', 'Betweeness Centrality']
+
+  plot = px.Figure(data=[go.Bar(
+      name = 'Entire Graph',
+      x = x,
+      y = [dict_mean(Gdc), dict_mean(Gidc), dict_mean(Godc), dict_mean(Gcc), dict_mean(Gbc)],
+      text = [round(dict_mean(Gdc), 3), round(dict_mean(Gidc), 3), round(dict_mean(Godc), 3), round(dict_mean(Gcc), 3), round(dict_mean(Gbc), 3)],
+      textposition='auto'
+    ),
+                        go.Bar(
+      name = 'Sub-Graph',
+      x = x,
+      y = [dict_mean(Hdc), dict_mean(Hidc), dict_mean(Hodc), dict_mean(Hcc), dict_mean(Hbc)],
+      text = [round(dict_mean(Hdc), 3), round(dict_mean(Hidc), 3), round(dict_mean(Hodc), 3), round(dict_mean(Hcc), 3), round(dict_mean(Hbc), 3)],
+      textposition='auto'
+    )
+  ])
+  
+  plot.update_layout(title='Metric Comparison of Graph vs. Sub-Graph')
+                    
+  plot.show()

@@ -1,5 +1,5 @@
 from dimensionator.generators import DataGen, DDDRandomWalk
-from networks import *
+from networks import erdos_renyi, rw, draw, sub_graph, comparison_graph, plt
 
 def main():
     # my_data = DataGen(num_points=500_000)
@@ -14,18 +14,17 @@ def main():
         my_cube.walk(unique_path=False)
 
 def networks():
-    F = erdos_renyi(50, 0.6, directed=True)
-    visited = rw(F, 25, 0)
-    draw(F)
+    G = erdos_renyi(50, 0.2, directed=True)
+    visited = rw(G, 1000, 0)
+    draw(G)
     plt.show()
 
-    H = sub_graph(F, visited)
+    H = sub_graph(G, visited)
     draw(H)
     plt.show()
 
-    metrics(F)
-    metrics(H)
+    comparison_graph(G, H)
 
 if __name__ == '__main__':
-    main()
-    #networks()
+    #main()
+    networks()
