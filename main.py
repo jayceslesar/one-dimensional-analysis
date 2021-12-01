@@ -31,7 +31,7 @@ def networks():
     # comparison_graph(G, H)
     
     # running more than one walker
-    number_of_runners = 5
+    number_of_runners = 1
     visited = run_multiple_runners(G, number_of_runners)
     H = sub_graph(G, visited)
     draw(G) 

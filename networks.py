@@ -71,8 +71,6 @@ def sub_graph(graph, visited):
 def dict_mean(dicts):
   return sum(dicts.values()) / len(dicts)
 
-
- 
 def comparison_graph(G, H):
 
   Gdc, Gidc, Godc, Gcc, Gbc  = metrics(G)
