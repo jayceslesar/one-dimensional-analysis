@@ -105,7 +105,7 @@ def comparison_graph(G, H, num_walkers):
   ])
   
   plot.update_layout(title=f'Metric Comparison of Graph with {G.number_of_nodes()} nodes vs. Sub-Graph with {H.number_of_nodes()} nodes with {num_walkers} walkers')
-                    
+  fig.update_layout(font_size=20)
   plot.show()
 
 

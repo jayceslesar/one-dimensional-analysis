@@ -70,6 +70,7 @@ class DataGen:
         fig.add_trace(go.Scatter(x=np.arange(len(self.data)), y=self.data, mode='lines'))
         fig.update_xaxes(title='Timestamp (index)')
         fig.update_yaxes(title='Value')
+        fig.update_layout(font_size=20)
         fig.update_layout(title=f'Data of size {self.num_points:,} and {self.num_sections} sections.')
 
         self.plot = fig
@@ -103,6 +104,7 @@ class DataGen:
 
         fig.update_xaxes(title='Timestamp (index)')
         fig.update_yaxes(title='Value')
+        fig.update_layout(font_size=20)
         fig.update_layout(title=f'Data of size {self.num_points:,} and {self.num_sections} sections.')
 
         self.rate_plot = fig
@@ -163,11 +165,13 @@ class DDDRandomWalk:
     def walk(self, num_steps: int = None, unique_path: bool = False):
         """Perform a random walk for n steps or until an edge is hit."""
         cube_to_walk = deepcopy(self.empty)
+        gradient = deepcopy(self.empty)
         current_x, current_y, current_z = self.starting_point
         visited = [self.starting_point]
         x_upper, y_upper, z_upper = self.empty.shape
 
         cube_to_walk[current_x, current_y, current_z] = 1
+        gradient[current_x, current_y, current_z] = 1
         iterations = 1
 
         if num_steps is None:
@@ -178,14 +182,19 @@ class DDDRandomWalk:
                 else:
                     neighbors = self.get_neighbors(current_x, current_y, current_z)
 
-                next_point = random.choice(neighbors)
+                try:
+                    next_point = random.choice(neighbors)
+                except IndexError:
+                    return iterations
+
                 next_x, next_y, next_z = next_point
                 if (next_x == 0 or next_x == x_upper-1) or (next_y == 0 or next_y == y_upper-1) or (next_z == 0 or next_z == z_upper-1):
                     done = True
 
                 current_x, current_y, current_z = next_x, next_y, next_z
-                cube_to_walk[current_x, current_y, current_z] = 1
                 iterations += 1
+                cube_to_walk[current_x, current_y, current_z] = 1
+                gradient[current_x, current_y, current_z] = iterations
                 visited.append(next_point)
 
         else:
@@ -203,22 +212,25 @@ class DDDRandomWalk:
 
                     current_x, current_y, current_z = next_x, next_y, next_z
                     cube_to_walk[current_x, current_y, current_z] = 1
+                    gradient[current_x, current_y, current_z] = step
                     visited.append(next_point)
 
             except IndexError:  # no more neighbors that have not been visited
                 pass
 
-        x = cube_to_walk[:, 0, 0]
-        y = cube_to_walk[0, :, 0]
-        z = cube_to_walk[0, 0, :]
+        # return iterations
 
 
 
         x, y, z = np.where(cube_to_walk == 1)
+        x_g, y_g, z_g = np.where(gradient > 0)
 
         fig = go.Figure(data=[go.Scatter3d(x=x, y=y, z=z,
-                                        mode='markers')])
+                                        mode='markers',
+                                        )])
+
         fig.update_layout(title=f'{self.length+1}x{self.width+1}x{self.height+1}, ran for {iterations:,} steps.')
+        fig.update_layout(font_size=20)
         fig.show()
 
 

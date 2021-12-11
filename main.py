@@ -1,18 +1,30 @@
 from numpy import number
-from dimensionator.generators import DataGen, DDDRandomWalk
 from networks import erdos_renyi, rw, draw, sub_graph, comparison_graph, run_multiple_runners, plt, random
+from dimensionator.generators import DataGen, DDDRandomWalk, figures_to_html
+import plotly.express as px
+
 
 def main():
-    # my_data = DataGen(num_points=500_000)
+    my_data = DataGen(num_points=500_000)
 
-    # my_data.generate()
+    my_data.generate()
 
-    # my_data.explore()
-    dims = [9, 49, 99, 499]
-    for dim in dims:
-        shape = dim
-        my_cube = DDDRandomWalk(shape, shape, shape)
-        my_cube.walk(unique_path=False)
+    my_data.explore()
+    # dims = [49, 499] #, 999, 1499]
+    # times = 100
+    # for dim in dims:
+    #     print(dim)
+    #     shape = dim
+    #     curr = []
+    #     my_cube = DDDRandomWalk(shape, shape, shape)
+    #     # for step in range(times):
+    #     #     print(step)
+    #     #     curr.append(my_cube.walk(unique_path=True))
+    #     # fig = px.histogram(x=curr)
+    #     # fig.update_layout(font_size=20)
+    #     # fig.show()
+
+
 
 def networks():
     G = erdos_renyi(50, 0.2, directed=True)
