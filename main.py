@@ -5,21 +5,23 @@ import plotly.express as px
 
 
 def main():
-    my_data = DataGen(num_points=500_000)
+    # my_data = DataGen(num_points=500_000)
 
-    my_data.generate()
+    # my_data.generate()
 
-    my_data.explore()
-    # dims = [49, 499] #, 999, 1499]
-    # times = 100
-    # for dim in dims:
-    #     print(dim)
-    #     shape = dim
-    #     curr = []
-    #     my_cube = DDDRandomWalk(shape, shape, shape)
+    # my_data.explore()
+    dims = [49, 499, 999, 1499]
+    dims = [1499]
+    times = 100
+    for dim in dims:
+        print(dim)
+        shape = dim
+        curr = []
+        my_cube = DDDRandomWalk(shape, shape, shape)
+        my_cube.walk()
     #     # for step in range(times):
     #     #     print(step)
-    #     #     curr.append(my_cube.walk(unique_path=True))
+        #     curr.append(my_cube.walk(unique_path=True))
     #     # fig = px.histogram(x=curr)
     #     # fig.update_layout(font_size=20)
     #     # fig.show()
@@ -57,5 +59,5 @@ def networks():
     comparison_graph(G, H, number_of_runners)
 
 if __name__ == '__main__':
-    #main()
-    networks()
+    main()
+    # networks()

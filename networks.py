@@ -109,8 +109,8 @@ def comparison_graph(G, H, num_walkers):
       textposition='auto'
     )
   ])
-  
-  plot.update_layout(title=f'Metric Comparison of Graph with {G.number_of_nodes()} nodes vs. Sub-Graph with {H.number_of_nodes()} nodes with {num_walkers} walkers', font_size=20)
+  plot.update_layout(title=f'Metric Comparison of Graph with {G.number_of_nodes()} nodes vs. Sub-Graph with {H.number_of_nodes()} nodes with {num_walkers} walkers')
+  fig.update_layout(font_size=20)
   plot.show()
 
 def run_multiple_runners(graph, num_times, walk_length):
