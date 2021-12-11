@@ -1,5 +1,5 @@
 from numpy import number
-from networks import erdos_renyi, rw, draw, sub_graph, comparison_graph, run_multiple_runners, plt, random
+from networks import erdos_renyi, rw, draw, sub_graph, comparison_graph, run_multiple_runners, plt, random, watts_strogatz
 from dimensionator.generators import DataGen, DDDRandomWalk, figures_to_html
 import plotly.express as px
 
@@ -28,7 +28,9 @@ def main():
 
 def networks():
     G = erdos_renyi(50, 0.2, directed=True)
-    
+    # G = watts_strogatz(50, 30, 0.5)
+    #draw(G)
+   # plt.show()
     # running single walker
 
     # length_of_walk = 100
@@ -41,10 +43,10 @@ def networks():
     # H = sub_graph(G, visited)
     # draw(H)
     # plt.show()
-    # comparison_graph(G, H)
+    # comparison_graph(G, H, 1)
     
-    #running more than one walker
-    number_of_runners = 5
+    # running more than one walker
+    number_of_runners = 3
     visited = run_multiple_runners(G, number_of_runners, walk_length=50)
     H = sub_graph(G, visited)
     draw(G) 
